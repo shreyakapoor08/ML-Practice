@@ -2,16 +2,22 @@ import cv2
 import numpy as np 
 
 cap = cv2.VideoCapture(0)
-face_cascade = cv2.CascadeClassifier("haarcascade_frontalface_alt.xml")
+
+#creating a classifier
+#we are creating one classifier obj which works on the facial data
+
+face_cascade = cv2.CascadeClassifier("haarcascade_frontalface_alt.xml") 
 
 while True:
-	ret,frame = cap.read()
+	ret,frame = cap.read() #we have read one imge
 
 	gray_frame = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
 
 	if ret == False:
 		continue
 
+	#we are going to give this img to my model it has special model called detectMultiScale
+	#it has got 2  one is called scaling factor and number of neighbor 
 	faces = face_cascade.detectMultiScale(gray_frame,1.3,5)
 	if len(faces) == 0:
 		continue
@@ -24,7 +30,7 @@ while True:
 		face_selection = cv2.resize(face_offset,(100,100))
 
 		cv2.imshow("Face", face_selection)
-		cv2.rectangle(frame,(x,y),(x+w,y+h),(0,255,0),2)
+		cv2.rectangle(frame,(x,y),(x+w,y+h),(0,255,0),2) #x+w and y+h are opp coord
 
 	cv2.imshow("faces",frame)
 
