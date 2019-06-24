@@ -1,3 +1,18 @@
+# Recognise Faces using some classification algorithm - like Logistic, KNN, SVM etx.
+
+
+# 1. load the training data (numpy arrays of all the persons)
+		# x- values are stored in the numpy arrays
+		# y- values we need to assign for each person
+# 2. Read a video stream using opencv
+# 3. extract faces out of it
+# 4. use KNN to find prediction of face (int)
+# 5. map the predicted id to name of the user
+# 6. Display the predictions on the screen - bounding box and name
+
+
+
+
 import numpy as np
 import cv2
 import os
@@ -34,24 +49,31 @@ face_cascade = cv2.CascadeClassifier("haarcascade_frontalface_alt.xml")
 
 dataset_path = "./face_dataset/"
 
-face_data = []
-labels = []
-class_id = 0
-names = {}
+face_data = [] #forms x value of data
+labels = [] #forms y value of data
+class_id = 0 #labels for the given file
+names = {} #dictionary used to create mapping btw id and name
 
 
 # Dataset prepration
-for fx in os.listdir(dataset_path):
+for fx in os.listdir(dataset_path): #iterate over the directory
 	if fx.endswith('.npy'):
 		names[class_id] = fx[:-4]
-		data_item = np.load(dataset_path + fx)
-		face_data.append(data_item)
+		data_item = np.load(dataset_path + fx) #giving file name along with its path, this will load the file
+		face_data.append(data_item) #this will be a list
 
+		#create labels for the class
+		#suppose we have a file A.npy which will have 10 faces of person A
+		#it is basically 10 rows and each rows will have some number of features
+		#np.ones is an array of size 10
+		# so class_id 0 is multiplied with array of ones so we get zeroes
+		#then we increment the class id and again multiply with array of ones and so on the process will go
+		#basically for each training point we are creating labels
 		target = class_id * np.ones((data_item.shape[0],))
 		class_id += 1
 		labels.append(target)
 
-face_dataset = np.concatenate(face_data, axis=0)
+face_dataset = np.concatenate(face_data, axis=0) #defining axis to define in which direction we want to concatinate
 face_labels = np.concatenate(labels, axis=0).reshape((-1, 1))
 print(face_labels.shape)
 print(face_dataset.shape)
@@ -61,8 +83,10 @@ print(trainset.shape)
 
 font = cv2.FONT_HERSHEY_SIMPLEX
 
+#Testing part
+
 while True:
-	ret, frame = cap.read()
+	ret, frame = cap.read() #reading frames
 	if ret == False:
 		continue
 	# Convert frame to grayscale
