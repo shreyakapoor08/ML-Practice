@@ -58,7 +58,7 @@ names = {} #dictionary used to create mapping btw id and name
 # Dataset prepration
 for fx in os.listdir(dataset_path): #iterate over the directory
 	if fx.endswith('.npy'):
-		names[class_id] = fx[:-4]
+		names[class_id] = fx[:-4] # names of class_id should be mapped with name like shreya.npy here .npy will be sliced and the label will be associated with shreya
 		data_item = np.load(dataset_path + fx) #giving file name along with its path, this will load the file
 		face_data.append(data_item) #this will be a list
 
@@ -95,21 +95,24 @@ while True:
 	# Detect multi faces in the image
 	faces = face_cascade.detectMultiScale(gray, 1.3, 5)
 
-	for face in faces:
+	for face in faces: #iterate over all the faces
 		x, y, w, h = face
 
-		# Get the face ROI
+		# Get the face ROI(region of interest)
 		offset = 5
 		face_section = frame[y-offset:y+h+offset, x-offset:x+w+offset]
 		face_section = cv2.resize(face_section, (100, 100))
 
-		out = knn(trainset, face_section.flatten())
+		#Predicted Label (out)
+		out = knn(trainset, face_section.flatten()) #calling the knn function to make prediction
+		# .flatten to call the linear part of the face
 
 		# Draw rectangle in the original image
-		cv2.putText(frame, names[int(out)],(x,y-10), cv2.FONT_HERSHEY_SIMPLEX, 1,(255,0,0),2,cv2.LINE_AA)
-		cv2.rectangle(frame, (x,y), (x+w,y+h), (0,255,0), 2)
+		#display on the screen the name and the rectange around it
+		cv2.putText(frame, names[int(out)],(x,y-10), cv2.FONT_HERSHEY_SIMPLEX, 1,(255,0,0),2,cv2.LINE_AA) #check documentation of cv2.putText()
+		cv2.rectangle(frame, (x,y), (x+w,y+h), (0,255,0), 2) #in parameter passing rgb val and thickness
 
-	cv2.imshow("Faces", frame)
+	cv2.imshow("Faces", frame) #display frame on the screen
 
 	if cv2.waitKey(1) & 0xFF == ord('q'):
 		break
